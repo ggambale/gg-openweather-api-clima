@@ -2,6 +2,7 @@ const urlBase = 'https://api.openweathermap.org/data/2.5/weather'
 const API_KEY = 'e398943279042bac40d70394db47c73e'
 
 const cityInput = document.getElementById('cityInput')
+const searchBtn = document.getElementById('searchBtn')
 const weatherResponse = document.getElementById('response')
 const loading = document.getElementById('loading')
 
@@ -125,6 +126,8 @@ const hideLoader = () => {
 async function weatherCitySearch() {
     const url = `${urlBase}?units=metric&q=${cityInput.value}&appid=${API_KEY}&lang=es`
     try {
+        cityInput.setAttribute('disabled', true)
+        searchBtn.setAttribute('disabled', true)
         showLoader()
         const response = await fetch(url)
         if(!response.ok){
@@ -136,6 +139,8 @@ async function weatherCitySearch() {
     } catch (error) {
         weatherCitySearchError(error.message)
     } finally {
+        cityInput.removeAttribute('disabled')
+        searchBtn.removeAttribute('disabled')
         hideLoader()
     }
 }
