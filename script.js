@@ -8,9 +8,7 @@ const loading = document.getElementById('loading')
 
 const searchInputAction = (event) => {
     event.preventDefault()
-    weatherResponse.classList.remove('error-code')
-    weatherResponse.innerHTML = ''
-    cityInput.placeholder = 'Ej: Buenos Aires'
+    resetError()
     if(!validateSearchInput()){
         return false
     } else {
@@ -37,13 +35,19 @@ const validateSearchInput = () => {
 }
 
 const showError = (ele, msg) => {
-    document.getElementById('weatherSearch').classList.add('search-error')
+    document.getElementById('cityInputContainer').classList.add('search-error')
     setTimeout(function(){
-        document.getElementById('weatherSearch').classList.remove('search-error')
+        document.getElementById('cityInputContainer').classList.remove('search-error')
     }, 1000)
     ele.value = ''
     ele.placeholder = msg
     ele.focus()
+}
+
+const resetError = () => {
+    weatherResponse.classList.remove('error-code')
+    weatherResponse.innerHTML = ''
+    cityInput.placeholder = 'Ej: Buenos Aires'
 }
 
 const weatherCitySearchError = (msg) => {
@@ -116,6 +120,7 @@ const weatherWidgetUpdate = (response) => {
 }
 
 const showLoader = () => {
+    weatherResponse.innerHTML = ''
     loading.style.display = 'flex'
 }
 
@@ -140,7 +145,7 @@ async function weatherCitySearch() {
         showLoader()
         const response = await fetch(url)
         if(!response.ok){
-            throw new Error(`No se encontraron resultados!`)
+            throw new Error(`No hay resultados para: ${cityInput.value}`)
         }
 
         const json = await response.json()
@@ -153,6 +158,39 @@ async function weatherCitySearch() {
     }
 }
 
+async function weatherGeoSearch(position) {
+    let lat = position.coords.latitude
+    let lon = position.coords.longitude
+    const url = `${urlBase}?units=metric&lat=${lat}&lon=${lon}&appid=${API_KEY}&lang=es`
+    try {
+        disabledSearch(true)
+        showLoader()
+        const response = await fetch(url)
+        if(!response.ok){
+            throw new Error(`No hay resultados para: ${lat}, ${lon}`)
+        }
+
+        const json = await response.json()
+        weatherWidgetUpdate(json)
+    } catch (error) {
+        weatherCitySearchError(error.message)
+    } finally {
+        disabledSearch(false)
+        hideLoader()
+    }
+}
+
+document.getElementById('geolocationBtn').addEventListener('click', function(event){
+    event.preventDefault()
+    cityInput.value = ''
+    resetError()
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(weatherGeoSearch);
+      } else {
+        weatherCitySearchError('Geolocation is not supported by this browser.')
+      }
+})
+
 document.getElementById('searchBtn').addEventListener('click', searchInputAction)
 document.getElementById('cityInput').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
@@ -161,8 +199,7 @@ document.getElementById('cityInput').addEventListener('keypress', function (even
 })
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    const searchContainer = document.getElementById('weatherSearch')
-    const serachInput = document.getElementById('weatherSearch')
+    const searchContainer = document.getElementById('cityInputContainer')
     setTimeout(function(){
         searchContainer.classList.remove('search-focus')
     }, 1000)

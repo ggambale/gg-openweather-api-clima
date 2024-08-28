@@ -12,10 +12,15 @@
     <div class="container">
         <div class="main">
             <h1 id="appTitle">Proyecto con <span>OpenWeatherMap.org</span></h1>
-            <div id="weatherSearch" class="search-focus">
-                <input type="text" name="city" id="cityInput" placeholder="Ej: Buenos Aires">
-                <a href="#" id="searchBtn" class="search-btn">
-                    <i class='bx bx-search'></i>
+            <div id="weatherSearch">
+                <label id="cityInputContainer" for="city" class="search-focus">
+                    <input type="text" name="city" id="cityInput" placeholder="Ej: Buenos Aires">
+                    <a href="#" id="searchBtn" class="search-btn">
+                        <i class='bx bx-search'></i>
+                    </a>
+                </label>
+                <a href="#" id="geolocationBtn" class="geolocation-btn">
+                    <i class='bx bx-map'></i>
                 </a>
             </div>
             <div id="weatherResponse">
