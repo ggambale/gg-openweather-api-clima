@@ -123,11 +123,20 @@ const hideLoader = () => {
     loading.style.display = 'none'
 }
 
+const disabledSearch = (status) => {
+    if(status){
+        cityInput.setAttribute('disabled', true)
+        searchBtn.setAttribute('disabled', true)
+    } else {
+        cityInput.removeAttribute('disabled')
+        searchBtn.removeAttribute('disabled')
+    }
+}
+
 async function weatherCitySearch() {
     const url = `${urlBase}?units=metric&q=${cityInput.value}&appid=${API_KEY}&lang=es`
     try {
-        cityInput.setAttribute('disabled', true)
-        searchBtn.setAttribute('disabled', true)
+        disabledSearch(true)
         showLoader()
         const response = await fetch(url)
         if(!response.ok){
@@ -139,8 +148,7 @@ async function weatherCitySearch() {
     } catch (error) {
         weatherCitySearchError(error.message)
     } finally {
-        cityInput.removeAttribute('disabled')
-        searchBtn.removeAttribute('disabled')
+        disabledSearch(false)
         hideLoader()
     }
 }
