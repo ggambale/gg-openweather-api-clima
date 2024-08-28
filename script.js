@@ -3,17 +3,15 @@ const API_KEY = 'e398943279042bac40d70394db47c73e'
 
 const cityInput = document.getElementById('cityInput')
 const weatherResponse = document.getElementById('weatherResponse')
-const inputPlaceholder = 'Ej: Buenos Aires'
-cityInput.placeholder = inputPlaceholder
 
 const searchInputAction = (event) => {
     event.preventDefault()
+    weatherResponse.classList.remove('error-code')
+    weatherResponse.innerHTML = ''
+    cityInput.placeholder = 'Ej: Buenos Aires'
     if(!validateSearchInput()){
         return false
     } else {
-        weatherResponse.classList.remove('error-code')
-        weatherResponse.innerHTML = ''
-        cityInput.placeholder = inputPlaceholder
         weatherCitySearch()
     }
 }
@@ -49,6 +47,7 @@ const showError = (ele, msg) => {
 async function weatherCitySearch() {
     const url = `${urlBase}?units=metric&q=${cityInput.value}&appid=${API_KEY}&lang=es`
     try {
+        showLoader()
         const response = await fetch(url)
         if(!response.ok){
             throw new Error(`No se encontraron resultados!`)
@@ -58,6 +57,8 @@ async function weatherCitySearch() {
         weatherWidgetUpdate(json)
     } catch (error) {
         weatherCitySearchError(error.message)
+    } finally {
+        hideLoader()
     }
 }
 
@@ -81,8 +82,6 @@ const weatherWidgetUpdate = (response) => {
     let currentDay = currentDayName()
     let temp = response.main.temp
     let humidity = response.main.humidity
-
-    weatherResponse.innerHTML = ''
 
     const eleContainer = document.createElement('div')
     eleContainer.id = 'weatherWidget'
@@ -130,6 +129,39 @@ const weatherWidgetUpdate = (response) => {
 
     weatherResponse.appendChild(eleContainer)
 
+}
+
+const showLoader = () => {
+    const loaderDot = document.createElement('div')
+    loaderDot.classList.add('loader-dot')
+
+    const loaderLoader = document.createElement('div')
+    loaderLoader.classList.add('loader')
+    loaderLoader.appendChild(loaderDot)
+
+    const loaderWrapper = document.createElement('div')
+    loaderWrapper.classList.add('loader-wrapper')
+    loaderWrapper.appendChild(loaderLoader)
+    loaderWrapper.appendChild(loaderLoader)
+    loaderWrapper.appendChild(loaderLoader)
+    loaderWrapper.appendChild(loaderLoader)
+    loaderWrapper.appendChild(loaderLoader)
+    loaderWrapper.appendChild(loaderLoader)
+
+    const loaderContainer = document.createElement('div')
+    loaderContainer.classList.add('loader-container')
+    loaderContainer.appendChild(loaderWrapper)
+
+    const loaderText = document.createElement('div')
+    loaderText.classList.add('loader-text')
+    loaderText.textContent = 'Cargando...'
+    loaderContainer.appendChild(loaderText)
+
+    weatherResponse.appendChild(loaderContainer)
+}
+
+const hideLoader = () => {
+    document.querySelectorAll('.loader-container').forEach(el => el.remove())
 }
 
 document.getElementById('searchBtn').addEventListener('click', searchInputAction)
