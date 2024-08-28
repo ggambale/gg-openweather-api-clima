@@ -248,12 +248,12 @@ p {
     font-weight: 400;
 }
 
-#weatherResponse {
+#response {
     display: flex;
     flex: 1;
 }
 
-#weatherResponse.error-code {
+#response.error-code {
     flex: 1;
     font-size: 16px;
     font-weight: 400;
@@ -266,6 +266,13 @@ p {
 }
 
 /* Loader CSS */
+#loading {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
 .loader-container{
     position: relative;
     width: 100%;

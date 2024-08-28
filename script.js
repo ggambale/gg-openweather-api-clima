@@ -2,7 +2,8 @@ const urlBase = 'https://api.openweathermap.org/data/2.5/weather'
 const API_KEY = 'e398943279042bac40d70394db47c73e'
 
 const cityInput = document.getElementById('cityInput')
-const weatherResponse = document.getElementById('weatherResponse')
+const weatherResponse = document.getElementById('response')
+const loading = document.getElementById('loading')
 
 const searchInputAction = (event) => {
     event.preventDefault()
@@ -23,10 +24,10 @@ const validateSearchInput = () => {
     if(cityValue.trim() == ''){
         showError(cityInput, 'Ingrese una Ciudad...')
         isValid = false
-    } else if (cityValue.length < 3){
+    } else if (cityValue.trim().length < 3){
         showError(cityInput, 'Ingrese mas de 3 caracteres...')
         isValid = false
-    } else if (/\d/.test(cityValue)){
+    } else if (/\d/.test(cityValue.trim())){
         showError(cityInput, 'No ingrese números...')
         isValid = false
     }
@@ -42,24 +43,6 @@ const showError = (ele, msg) => {
     ele.value = ''
     ele.placeholder = msg
     ele.focus()
-}
-
-async function weatherCitySearch() {
-    const url = `${urlBase}?units=metric&q=${cityInput.value}&appid=${API_KEY}&lang=es`
-    try {
-        showLoader()
-        const response = await fetch(url)
-        if(!response.ok){
-            throw new Error(`No se encontraron resultados!`)
-        }
-
-        const json = await response.json()
-        weatherWidgetUpdate(json)
-    } catch (error) {
-        weatherCitySearchError(error.message)
-    } finally {
-        hideLoader()
-    }
 }
 
 const weatherCitySearchError = (msg) => {
@@ -132,34 +115,29 @@ const weatherWidgetUpdate = (response) => {
 }
 
 const showLoader = () => {
-    weatherResponse.innerHTML =
-    '<div class="loader-container">' +
-    '<div class="loader-wrapper">' +
-    '<div class="loader">' +
-    '<div class="loader-dot"></div>' +
-    '</div>' +
-    '<div class="loader">' +
-    '<div class="loader-dot"></div>' +
-    '</div>' +
-    '<div class="loader">' +
-    '<div class="loader-dot"></div>' +
-    '</div>' +
-    '<div class="loader">' +
-    '<div class="loader-dot"></div>' +
-    '</div>' +
-    '<div class="loader">' +
-    '<div class="loader-dot"></div>' +
-    '</div>' +
-    '<div class="loader">' +
-    '<div class="loader-dot"></div>' +
-    '</div>' +
-    '</div>' +
-    '<div class="loader-text">Cargando...</div>' +
-    '</div>'
+    loading.style.display = 'flex'
 }
 
 const hideLoader = () => {
-    document.querySelectorAll('.loader-container').forEach(el => el.remove())
+    loading.style.display = 'none'
+}
+
+async function weatherCitySearch() {
+    const url = `${urlBase}?units=metric&q=${cityInput.value}&appid=${API_KEY}&lang=es`
+    try {
+        showLoader()
+        const response = await fetch(url)
+        if(!response.ok){
+            throw new Error(`No se encontraron resultados!`)
+        }
+
+        const json = await response.json()
+        weatherWidgetUpdate(json)
+    } catch (error) {
+        weatherCitySearchError(error.message)
+    } finally {
+        hideLoader()
+    }
 }
 
 document.getElementById('searchBtn').addEventListener('click', searchInputAction)
@@ -170,7 +148,9 @@ document.getElementById('cityInput').addEventListener('keypress', function (even
 })
 
 document.addEventListener('DOMContentLoaded', (event) => {
+    const searchContainer = document.getElementById('weatherSearch')
+    const serachInput = document.getElementById('weatherSearch')
     setTimeout(function(){
-        document.getElementById('weatherSearch').classList.remove('search-focus')
+        searchContainer.classList.remove('search-focus')
     }, 1000)
 })
