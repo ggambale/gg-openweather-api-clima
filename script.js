@@ -132,32 +132,30 @@ const weatherWidgetUpdate = (response) => {
 }
 
 const showLoader = () => {
-    const loaderDot = document.createElement('div')
-    loaderDot.classList.add('loader-dot')
-
-    const loaderLoader = document.createElement('div')
-    loaderLoader.classList.add('loader')
-    loaderLoader.appendChild(loaderDot)
-
-    const loaderWrapper = document.createElement('div')
-    loaderWrapper.classList.add('loader-wrapper')
-    loaderWrapper.appendChild(loaderLoader)
-    loaderWrapper.appendChild(loaderLoader)
-    loaderWrapper.appendChild(loaderLoader)
-    loaderWrapper.appendChild(loaderLoader)
-    loaderWrapper.appendChild(loaderLoader)
-    loaderWrapper.appendChild(loaderLoader)
-
-    const loaderContainer = document.createElement('div')
-    loaderContainer.classList.add('loader-container')
-    loaderContainer.appendChild(loaderWrapper)
-
-    const loaderText = document.createElement('div')
-    loaderText.classList.add('loader-text')
-    loaderText.textContent = 'Cargando...'
-    loaderContainer.appendChild(loaderText)
-
-    weatherResponse.appendChild(loaderContainer)
+    weatherResponse.innerHTML =
+    '<div class="loader-container">' +
+    '<div class="loader-wrapper">' +
+    '<div class="loader">' +
+    '<div class="loader-dot"></div>' +
+    '</div>' +
+    '<div class="loader">' +
+    '<div class="loader-dot"></div>' +
+    '</div>' +
+    '<div class="loader">' +
+    '<div class="loader-dot"></div>' +
+    '</div>' +
+    '<div class="loader">' +
+    '<div class="loader-dot"></div>' +
+    '</div>' +
+    '<div class="loader">' +
+    '<div class="loader-dot"></div>' +
+    '</div>' +
+    '<div class="loader">' +
+    '<div class="loader-dot"></div>' +
+    '</div>' +
+    '</div>' +
+    '<div class="loader-text">Cargando...</div>' +
+    '</div>'
 }
 
 const hideLoader = () => {
