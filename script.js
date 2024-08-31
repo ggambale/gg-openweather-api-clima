@@ -180,15 +180,19 @@ async function weatherGeoSearch(position) {
     }
 }
 
+const getWeatherByLocation = () => {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(weatherGeoSearch);
+    } else {
+        weatherCitySearchError('Geolocation is not supported by this browser.')
+    }
+}
+
 document.getElementById('geolocationBtn').addEventListener('click', function(event){
     event.preventDefault()
     cityInput.value = ''
     resetError()
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(weatherGeoSearch);
-      } else {
-        weatherCitySearchError('Geolocation is not supported by this browser.')
-      }
+    getWeatherByLocation()
 })
 
 document.getElementById('searchBtn').addEventListener('click', searchInputAction)
@@ -200,7 +204,12 @@ document.getElementById('cityInput').addEventListener('keypress', function (even
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const searchContainer = document.getElementById('cityInputContainer')
-    setTimeout(function(){
-        searchContainer.classList.remove('search-focus')
-    }, 1000)
+
+    const focused = new Promise((resolve, reject) => {
+        setTimeout(function(){
+            searchContainer.classList.remove('search-focus')
+        }, 1000)
+    })
+
+    focused.then(getWeatherByLocation())
 })
